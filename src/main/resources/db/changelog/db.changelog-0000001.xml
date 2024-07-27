@@ -1,0 +1,105 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="11-01-2021 22:16" author="bayztracker">
+        <createTable tableName="users">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)"/>
+        </createTable>
+        <createTable tableName="roles">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="user_role">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="user_role" baseColumnNames="user_id" constraintName="FK_users_userrole"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="user_role" baseColumnNames="role_id" constraintName="FK_roles_userrole"
+                                 referencedTableName="roles"
+                                 referencedColumnNames="id"/>
+        <addUniqueConstraint tableName="user_role" columnNames="user_id, role_id" constraintName="UNIQ_user_role"/>
+        <insert tableName="roles">
+            <column name="id">1</column>
+            <column name="name">USER</column>
+        </insert>
+        <insert tableName="roles">
+            <column name="id">2</column>
+            <column name="name">ADMIN</column>
+        </insert>
+        <insert tableName="users">
+            <column name="id">1</column>
+            <column name="username">user</column>
+            <column name="password">$2a$10$8RqFe118dBEbGIf1iMwkRuh7XNKnWssCKES5ZI.KFMfbAp4sASGQi</column>
+        </insert>
+        <insert tableName="users">
+            <column name="id">2</column>
+            <column name="username">admin</column>
+            <column name="password">$2a$10$8RqFe118dBEbGIf1iMwkRuh7XNKnWssCKES5ZI.KFMfbAp4sASGQi</column>
+        </insert>
+        <insert tableName="user_role">
+            <column name="id">1</column>
+            <column name="user_id">1</column>
+            <column name="role_id">1</column>
+        </insert>
+        <insert tableName="user_role">
+            <column name="id">2</column>
+            <column name="user_id">2</column>
+            <column name="role_id">1</column>
+        </insert>
+        <insert tableName="user_role">
+            <column name="id">3</column>
+            <column name="user_id">2</column>
+            <column name="role_id">2</column>
+        </insert>
+    </changeSet>
+    <changeSet id="11-01-2022 23:44" author="bayztracker">
+        <createTable tableName="currencies">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="symbol" type="varchar(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="current_price" type="float"/>
+            <column name="created_at" type="datetime"/>
+            <column name="enabled" type="boolean"/>
+        </createTable>
+
+        <insert tableName="currencies">
+            <column name="id">1</column>
+            <column name="name">Dollar</column>
+            <column name="symbol">$</column>
+            <column name="current_price">10</column>
+            <column name="created_at">now()</column>
+            <column name="enabled">true</column>
+        </insert>
+    </changeSet>
+    <changeSet id="12-01-2022 20:44" author="bayztracker">
+        <createSequence sequenceName="seq_user" startValue="100" incrementBy="50"/>
+        <createSequence sequenceName="seq_role" startValue="100" incrementBy="50"/>
+        <createSequence sequenceName="seq_currency" startValue="100" incrementBy="50"/>
+    </changeSet>
+</databaseChangeLog>
