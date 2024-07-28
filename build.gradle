@@ -5,7 +5,7 @@ buildscript {
 	repositories {
 		mavenCentral()
 		jcenter()
-        maven { url "http://repo.spring.io/plugins-release" }
+        maven { url "https://repo.spring.io/plugins-release" }
         maven { url "https://plugins.gradle.org/m2/" }
 	}
 	dependencies {
@@ -36,7 +36,7 @@ dependencies {
 	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
 	compile('org.liquibase:liquibase-core')
 	runtime('org.springframework.boot:spring-boot-devtools')
-	runtime('org.postgresql:postgresql:42.3.1')
+	runtime('org.postgresql:postgresql:42.7.2')
 	testCompile('com.h2database:h2')
 	testCompile('org.springframework.boot:spring-boot-starter-aop')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
