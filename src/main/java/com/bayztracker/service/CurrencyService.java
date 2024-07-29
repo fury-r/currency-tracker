@@ -20,4 +20,8 @@ public class CurrencyService {
     public List<Currency> getEnabledCurrencies() {
         return currencyRepository.findAllByEnabledIsTrue();
     }
+    @Transactional(readOnly = true)
+    public List<Currency> getAll() {
+        return currencyRepository.findAll();
+    }
 }

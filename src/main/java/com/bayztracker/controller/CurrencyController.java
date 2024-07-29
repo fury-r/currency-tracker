@@ -20,10 +20,18 @@ public class CurrencyController {
     public CurrencyController(CurrencyService currencyService) {
         this.currencyService = currencyService;
     }
-
+    
+    // get all enabled
     @GetMapping
-    public ResponseEntity<List<CurrencyPayload>> getAll() {
+    public ResponseEntity<List<CurrencyPayload>> getAllEnabled() {
         List<Currency> currencies = currencyService.getEnabledCurrencies();
+        List<CurrencyPayload> payloads = currencies.stream().map(CurrencyPayload::create).collect(Collectors.toList());
+        return ResponseEntity.ok(payloads);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<CurrencyPayload>> getAllCurrencies() {
+        List<Currency> currencies = currencyService.getAll();
         List<CurrencyPayload> payloads = currencies.stream().map(CurrencyPayload::create).collect(Collectors.toList());
         return ResponseEntity.ok(payloads);
     }
