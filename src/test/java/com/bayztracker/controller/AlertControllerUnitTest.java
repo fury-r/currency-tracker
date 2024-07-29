@@ -1,36 +1,33 @@
-package com.bayztracker.scheduler;
+package com.bayztracker.controller;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.read.ListAppender;
 import com.bayztracker.data.AlertDetails;
 import com.bayztracker.model.Alert;
 import com.bayztracker.model.Currency;
 import com.bayztracker.model.Role;
 import com.bayztracker.model.User;
 import com.bayztracker.repositories.AlertRepository;
-
 import com.bayztracker.repositories.CurrencyRepository;
 import com.bayztracker.repositories.UserRepository;
+import com.bayztracker.scheduler.AlertScheduler;
 import com.bayztracker.service.AlertService;
 import com.bayztracker.utils.Status;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
-import java.util.*;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")
-public class AlertServiceTest {
-
+public class AlertControllerUnitTest {
     @Mock
     private AlertRepository alertRepository;
 
@@ -40,7 +37,7 @@ public class AlertServiceTest {
     @Mock
     private CurrencyRepository currencyRepository;
 
-    @Mock
+    @InjectMocks
     private AlertService alertService;
 
     @InjectMocks
@@ -50,11 +47,10 @@ public class AlertServiceTest {
     private  Long userId= 5L;
     private Long roleId= 5L;
 
-    private  User user;
-    private  Role role;
+    private User user;
+    private Role role;
     private  Alert alert;
-    private  Currency currency;
-
+    private Currency currency;
 
     @Before
     public void setUp(){
@@ -86,31 +82,40 @@ public class AlertServiceTest {
         alert.setId(11);
         when(alertRepository.findById(alert.getId())).thenReturn(Optional.of(alert));
         when(alertService.getAlertsOnStatus(Status.NEW)).thenReturn(Collections.singletonList(alert));
+        when(userRepository.findById(any())).thenReturn(Optional.ofNullable(this.user));
+        when(currencyRepository.findById(any())).thenReturn(Optional.ofNullable(this.currency));
+
     }
-
-
-   @Test
-   public void checkAlertNotTriggered()  {
-           alertScheduler.checkIfAlertTrigger();
-           verify(alertService,never()).updateAlertStatus(anyLong(),any(Status.class));
-   }
 
     @Test
-    public void  checkAlertIsTriggered(){
-        alert.getCurrency().setCurrentPrice(700000.13F);
-        when(alertService.updateAlertStatus(alert.getId(),Status.ACKED)).thenAnswer(invocationOnMock -> {
-            alert.setStatus(invocationOnMock.getArgument(1));
-            return  alert;
-        });
+    public  void createAlert(){
 
-        alertScheduler.checkIfAlertTrigger();
-        verify(alertService).updateAlertStatus(alert.getId(),Status.TRIGGERED);
-
-        Alert update=alertService.updateAlertStatus(alert.getId(),Status.ACKED);
-
-
-        assertThat(update.getStatus()).isEqualTo(Status.ACKED.toString());
+        alertService.createAlert(new AlertDetails(userId, currency.getId(),10F, Status.TRIGGERED));
+        verify(alertRepository,times(1)).save(any(Alert.class));
 
     }
+
+    @Test
+    public  void readAlert(){
+        Alert read=alertService.getAlert(alert.getId());
+        verify(alertRepository,times(1)).findById(alert.getId());
+        assertThat(read).isEqualTo(this.alert);
+
+    }
+
+    @Test
+    public  void updateAlert(){
+        alertService.updateAlert(alert.getId(),new AlertDetails(userId, currency.getId(),11F,Status.TRIGGERED));
+        verify(alertRepository,times(1)).save(any(Alert.class));
+
+    }
+
+    @Test
+    public  void deleteAlert(){
+        alertService.deleteAlert(alert.getId());
+        verify(alertRepository,times(1)).deleteById(alert.getId());
+
+    }
+
 
 }
