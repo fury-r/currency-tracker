@@ -25,58 +25,10 @@ import java.util.Set;
 @EnableScheduling
 @ComponentScan(basePackages = "com.bayztracker")
 public class BayzTrackerApplication {
-//    @Autowired
-//    private  DataInitializerService dataInitializerService;
+
     public static void main(String[] args) {
-//        EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "Eclipselink_JPA" );
-//        EntityManager entitymanager = emfactory.createEntityManager( );
-//        entitymanager.getTransaction().begin();
-//
-//        Set<Role> roles=new HashSet<Role>() ;
-//        Role role1=new Role();
-//        role1.setName("read");
-//        Role role2=new Role();
-//        role2.setName("read and write");
-//        roles.add(role2);
-//        User user1=new User();
-//
-//        user1.setUsername("fury-r");
-//        user1.setRoles(roles);
-//        user1.setPassword("test123");
-//        User user2=new User();
-//
-//        user2.setUsername("test");
-//        user2.setRoles(roles);
-//        user2.setPassword("test123");
-//
-//        entitymanager.persist(role1);
-//        entitymanager.persist(role2);
-//
-//        entitymanager.persist(user1);
-//        entitymanager.persist(user2);
-//
-//        Currency bitcoin=new Currency();
-//        bitcoin.setCurrentPrice(500000.12F);
-//        bitcoin.setName("Bitcoin");
-//        bitcoin.setEnabled(true);
-//
-//        entitymanager.persist(bitcoin);
-//
-//        Alert alert=new Alert();
-//        alert.setUser(user1);
-//        alert.setCurrency(bitcoin);
-//        alert.setTargetPrice(500000.125F);
-//        entitymanager.persist(alert);
-//        entitymanager.getTransaction().commit();
-//        entitymanager.close();
-//        emfactory.close();
 
         SpringApplication.run(BayzTrackerApplication.class, args);
     }
 
-
-    @PostConstruct
-    public  void  init(){
-//        dataInitializerService.insertDummyData();
-    }
 }

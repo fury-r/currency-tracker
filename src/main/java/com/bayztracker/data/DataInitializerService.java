@@ -36,28 +36,6 @@ public class DataInitializerService {
     @Transactional
     public void insertDummyData() {
 
-//        Set<Role> roles=new HashSet<Role>() ;
-//        Role role1=new Role();
-//        role1.setName("read");
-//        Role r1=roleRepository.save(role1);
-//        System.out.println(r1.getId()+" id----------------------------");
-//        roles.add(r1);
-//
-//        User user1=new User();
-//
-//        user1.setUsername("fury-r");
-//        user1.setRoles(roles);
-//        user1.setPassword("test123");
-//        user1.setId(50);
-//        User user2=new User();
-//
-//        user2.setUsername("test");
-//        user2.setRoles(roles);
-//        user2.setPassword("test123");
-//
-//        User user_1=userRepository.save(user1);
-
-
 
         Optional<User> user=userRepository.findById(Long.valueOf(2));
         if(user.isPresent()){
