@@ -7,6 +7,6 @@ RUN ./gradlew bootJar -DskipTests
 
 FROM azul/zulu-openjdk-alpine:11.0.13-jre
 RUN mkdir /app
-COPY --from=build /project/target/bayztracker-0.0.1-SNAPSHOT.jar /app/bayztracker-0.0.1-SNAPSHOT.jar
+COPY --from=gradlebuilder-clean ./project/build/libs/bayztracker-0.0.1-SNAPSHOT.jar /app/bayztracker-0.0.1-SNAPSHOT.jar
 WORKDIR /app
-CMD "java" "-jar" "bayztracker-0.0.1-SNAPSHOT.jar"
+CMD ["java" ,"-jar" ,"bayztracker-0.0.1-SNAPSHOT.jar"]
