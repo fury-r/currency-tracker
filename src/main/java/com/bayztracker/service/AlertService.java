@@ -71,20 +71,28 @@ public class AlertService {
             return  alertRepository.save(alert);
         }
 
-        throw new Error();
-
+        return  null;
     }
 
     @Transactional()
     public  Alert updateAlertStatus(Long id,Status status){
         Optional<Alert> findAlert=this.alertRepository.findById(id);
-        if(findAlert.isPresent() ){
-            Alert alert=findAlert.get();
-            alert.setStatus(status);
-            return alertRepository.save(alert);
-        }
 
-        throw new Error();
+        if(findAlert.isPresent()){
+            Alert alert=findAlert.get();
+            String alertStatus=alert.getStatus();
+            if (status == Status.CANCELLED && !alertStatus.equals(Status.NEW.toString())) {
+                throw new IllegalStateException("Alert cannot be cancelled because it is not in the NEW state. Current status: " + alertStatus);
+            }
+
+            if (status == Status.ACKED &&  !alertStatus.equals(Status.TRIGGERED.toString())) {
+                throw new IllegalStateException("Alert cannot be acknowledged because it is not in the TRIGGERED state. Current status: " + alertStatus);
+            }
+                alert.setStatus(status);
+                return alertRepository.save(alert);
+
+        }
+        throw new IllegalArgumentException("Alert with id " + id + " does not exist.");
     }
 
     /* Delete */
@@ -93,12 +101,7 @@ public class AlertService {
     public  boolean deleteAlert(Long id){
         this.alertRepository.deleteById(id);
         Optional<Alert> findAlert=this.alertRepository.findById(id);
-
-        if(findAlert.isPresent() ){
-            return  true;
-        }
-
-        return  false;
+        return true;
     }
 
 
@@ -117,7 +120,16 @@ public class AlertService {
 
 
     @Transactional(readOnly = true)
-    public  List<Alert> getNewAlerts(){
-        return  alertRepository.findAllNewAlerts();
+    public  List<Alert> getAlertsOnStatus(Status status){
+        return  alertRepository.findAlertsOnStatus(status.toString());
+    }
+
+
+    @Transactional()
+    public Alert getAlert(Long id){
+        Optional<Alert> alert=  alertRepository.findById(id);
+
+        return alert.orElse(null);
+
     }
 }
