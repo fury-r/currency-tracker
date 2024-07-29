@@ -111,11 +111,14 @@ public class AlertController {
 
         AlertDetails alert=new AlertDetails(alertPayload.getUser().getId(),alertPayload.getCurrency().getId(),alertPayload.getTargetPrice(), alertPayload.getStatus());
         Alert saved=  alertService.updateAlert(id,alert);
+        if(saved!=null){
         return  ResponseEntity.ok(AlertPayload.create(saved));
+        }
+        return  ResponseEntity.badRequest().body("Failed to update");
 
     }
 
-    // update alert by supplying everythin in body
+    // update alert by supplying everything in body
     @PutMapping
     public ResponseEntity<?> updateAlert(@RequestBody AlertPayload alertPayload){
         try {
@@ -126,8 +129,7 @@ public class AlertController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user is missing");
 
             }
-
-            AlertDetails alert=new AlertDetails(alertPayload.getUser().getId(),alertPayload.getCurrency().getId(),alertPayload.getTargetPrice(), Status.NEW);
+            AlertDetails alert=new AlertDetails(alertPayload.getUser().getId(),alertPayload.getCurrency().getId(),alertPayload.getTargetPrice(), alertPayload.getStatus());
             Alert saved=  alertService.updateAlert(alertPayload.getId(),alert);
             if(saved==null){
                 return  ResponseEntity.badRequest().body("Alert does not exist.Failed to update.");

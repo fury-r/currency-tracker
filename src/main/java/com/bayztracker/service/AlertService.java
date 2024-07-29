@@ -1,6 +1,7 @@
 package com.bayztracker.service;
 
 import com.bayztracker.data.AlertDetails;
+import com.bayztracker.exceptions.GlobalExceptionHandler;
 import com.bayztracker.model.Alert;
 import com.bayztracker.model.Currency;
 import com.bayztracker.model.User;
@@ -8,6 +9,9 @@ import com.bayztracker.repositories.AlertRepository;
 import com.bayztracker.repositories.CurrencyRepository;
 import com.bayztracker.repositories.UserRepository;
 import com.bayztracker.utils.Status;
+import jdk.internal.org.jline.utils.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +24,24 @@ public class AlertService {
     private final AlertRepository alertRepository;
     private final UserRepository userRepository;
     private final CurrencyRepository currencyRepository;
+    private static final Logger LOG = LoggerFactory.getLogger(AlertService.class);
 
     public AlertService(AlertRepository alertRepository,CurrencyRepository currencyRepository,UserRepository userRepository) {
         this.alertRepository = alertRepository;
         this.userRepository = userRepository;
         this.currencyRepository = currencyRepository;
 
+    }
+
+    public  boolean statusUpdateValidation(Status status1,Status status2){
+        if (status1 == Status.CANCELLED && status2!=Status.NEW) {
+            throw new IllegalStateException("Alert cannot be cancelled because it is not in the NEW state. Current status: " + status2);
+        }
+
+        if (status1 == Status.ACKED &&  status2!=Status.TRIGGERED) {
+            throw new IllegalStateException("Alert cannot be acknowledged because it is not in the TRIGGERED state. Current status: " + status2);
+        }
+        return  true;
     }
 
     /* Create */
@@ -42,8 +58,7 @@ public class AlertService {
             return alertRepository.save(alert);
         }
 
-        throw new Error();
-
+        throw new IllegalStateException("Invalid data");
     }
 
 
@@ -65,10 +80,17 @@ public class AlertService {
     public  Alert updateAlert(Long id,AlertDetails alertDtls){
         Optional<Alert> findAlert=this.alertRepository.findById(id);
         if(findAlert.isPresent() ){
-            Alert alert=findAlert.get();
-            alert.setTargetPrice(alertDtls.getTargetPrice());
-            alert.setStatus(alertDtls.getStatus());
-            return  alertRepository.save(alert);
+
+           try{
+               Alert alert=findAlert.get();
+               alert.setTargetPrice(alertDtls.getTargetPrice());
+               this.statusUpdateValidation(alertDtls.getStatus(),Status.valueOf(alert.getStatus()));
+               alert.setStatus(alertDtls.getStatus());
+               return  alertRepository.save(alert);
+           }catch (Exception e){
+               Log.error(e.getMessage());
+               return  null;
+           }
         }
 
         return  null;
@@ -81,15 +103,11 @@ public class AlertService {
         if(findAlert.isPresent()){
             Alert alert=findAlert.get();
             String alertStatus=alert.getStatus();
-            if (status == Status.CANCELLED && !alertStatus.equals(Status.NEW.toString())) {
-                throw new IllegalStateException("Alert cannot be cancelled because it is not in the NEW state. Current status: " + alertStatus);
-            }
 
-            if (status == Status.ACKED &&  !alertStatus.equals(Status.TRIGGERED.toString())) {
-                throw new IllegalStateException("Alert cannot be acknowledged because it is not in the TRIGGERED state. Current status: " + alertStatus);
-            }
-                alert.setStatus(status);
-                return alertRepository.save(alert);
+            this.statusUpdateValidation(status,Status.valueOf(alertStatus));
+
+            alert.setStatus(status);
+            return alertRepository.save(alert);
 
         }
         throw new IllegalArgumentException("Alert with id " + id + " does not exist.");
@@ -100,7 +118,6 @@ public class AlertService {
     @Transactional()
     public  boolean deleteAlert(Long id){
         this.alertRepository.deleteById(id);
-        Optional<Alert> findAlert=this.alertRepository.findById(id);
         return true;
     }
 
