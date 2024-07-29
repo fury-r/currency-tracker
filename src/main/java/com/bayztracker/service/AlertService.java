@@ -51,10 +51,17 @@ public class AlertService {
         Optional<User> user=this.userRepository.findById(alertDtls.getUserId());
         Optional<Currency> currency=this.currencyRepository.findById(alertDtls.getCurrencyId());
         if(user.isPresent() && currency.isPresent()){
+            Currency c=currency.get();
             alert.setUser(user.get());
             alert.setCurrency(currency.get());
             alert.setTargetPrice(alertDtls.getTargetPrice());
-            alert.setStatus(Status.NEW);
+            if( alertDtls.getTargetPrice()<=c.getCurrentPrice()){
+                alert.setStatus(Status.TRIGGERED);
+
+            }else{
+                alert.setStatus(Status.NEW);
+
+            }
             return alertRepository.save(alert);
         }
 
