@@ -53,7 +53,7 @@ public class AlertService {
         if(user.isPresent() && currency.isPresent()){
             Currency c=currency.get();
             alert.setUser(user.get());
-            alert.setCurrency(currency.get());
+            alert.setCurrency(c);
             alert.setTargetPrice(alertDtls.getTargetPrice());
             if( alertDtls.getTargetPrice()<=c.getCurrentPrice()){
                 alert.setStatus(Status.TRIGGERED);
