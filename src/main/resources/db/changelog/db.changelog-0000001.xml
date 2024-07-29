@@ -188,7 +188,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="27-07-2024 10:1'6" author="fury-r">
+    <changeSet id="27-07-2024 10:16" author="fury-r">
         <insert tableName="currencies">
             <column name="id">2</column>
             <column name="name">Rupee</column>
