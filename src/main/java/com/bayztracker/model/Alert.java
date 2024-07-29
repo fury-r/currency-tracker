@@ -15,7 +15,7 @@ public class Alert {
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "seq_alert")
     private  long id;
 
-    @OneToOne
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="user_id",nullable = false)
     private User user;
 
