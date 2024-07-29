@@ -15,11 +15,20 @@ public class GlobalExceptionHandler {
 
   private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-  @ExceptionHandler
+  @ExceptionHandler(IllegalStateException.class)
+  public ResponseEntity<String> handleIllegalStateException(IllegalStateException e) {
+    LOG.error("Request could not be processed: ", e);
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+  }
+  @ExceptionHandler(Exception.class)
   public ResponseEntity<AbstractMap.SimpleEntry<String, String>> handle(Exception exception) {
     LOG.error("Request could not be processed: ", exception);
     AbstractMap.SimpleEntry<String, String> response =
         new AbstractMap.SimpleEntry<>("message", "Request could not be processed");
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
+
+
+
 }
