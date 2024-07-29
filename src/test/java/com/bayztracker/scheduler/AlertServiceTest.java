@@ -1,35 +1,30 @@
 package com.bayztracker.scheduler;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import com.bayztracker.model.Alert;
 import com.bayztracker.model.Currency;
 import com.bayztracker.model.Role;
 import com.bayztracker.model.User;
 import com.bayztracker.repositories.AlertRepository;
-import com.bayztracker.repositories.CurrencyRepository;
-import com.bayztracker.repositories.RoleRepository;
+
 import com.bayztracker.repositories.UserRepository;
 import com.bayztracker.service.AlertService;
-import com.bayztracker.service.CurrencyService;
 import com.bayztracker.utils.Status;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.time.Duration;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,18 +38,11 @@ public class AlertServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private CurrencyService currencyService;
-
-    @Mock
-    private RoleRepository roleRepository;
-
-    @Mock
     private AlertService alertService;
 
     @InjectMocks
     private AlertScheduler alertScheduler;
 
-    private  static Logger LOG= LoggerFactory.getLogger(AlertScheduler.class);
 
     private  Long userId= 50000L;
     private Long roleId= 50000L;
@@ -64,6 +52,7 @@ public class AlertServiceTest {
     private  Alert alert;
     private  Currency bitcoin;
 
+    private ListAppender<ILoggingEvent> listAppender;
 
     @Before
     public void setUp(){
@@ -93,13 +82,13 @@ public class AlertServiceTest {
         alert.setTargetPrice(600000.13F);
         alert.setStatus(Status.NEW);
         when(alertRepository.findById(alert.getId())).thenReturn(Optional.of(alert));
-        when(alertService.getNewAlerts()).thenReturn(Collections.singletonList(alert));
+        when(alertService.getAlertsOnStatus(Status.NEW)).thenReturn(Collections.singletonList(alert));
 
     }
 
 
    @Test
-   public void  checkAlertNotTriggerred()  {
+   public void checkAlertNotTriggered()  {
            alertScheduler.checkIfAlertTrigger();
            verify(alertService,never()).updateAlertStatus(anyLong(),any(Status.class));
    }
@@ -107,9 +96,22 @@ public class AlertServiceTest {
     @Test
     public void  checkAlertIsTriggered(){
         alert.getCurrency().setCurrentPrice(700000.13F);
+        when(alertService.updateAlertStatus(alert.getId(),Status.ACKED)).thenAnswer(invocationOnMock -> {
+            alert.setStatus(invocationOnMock.getArgument(1));
+            return  alert;
+        });
+
         alertScheduler.checkIfAlertTrigger();
         verify(alertService,times(1)).updateAlertStatus(alert.getId(),Status.TRIGGERED);
+
+        Alert update=alertService.updateAlertStatus(alert.getId(),Status.ACKED);
+
+
+        assertThat(update.getStatus().toString()).isEqualTo(Status.ACKED.toString());
+
     }
+
+
 
 
 }
