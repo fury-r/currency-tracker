@@ -1,8 +1,6 @@
 package com.bayztracker.scheduler;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.read.ListAppender;
-import com.bayztracker.data.AlertDetails;
+
 import com.bayztracker.model.Alert;
 import com.bayztracker.model.Currency;
 import com.bayztracker.model.Role;
@@ -15,7 +13,6 @@ import com.bayztracker.service.AlertService;
 import com.bayztracker.utils.Status;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

@@ -1,13 +1,8 @@
 package com.bayztracker.data;
 
-import com.bayztracker.model.Currency;
-import com.bayztracker.model.User;
-import com.bayztracker.utils.Status;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
-import java.util.Date;
+import com.bayztracker.utils.Status;
+
 
 public class AlertDetails {
 

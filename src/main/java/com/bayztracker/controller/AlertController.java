@@ -2,7 +2,6 @@
 package com.bayztracker.controller;
 
 import com.bayztracker.data.AlertDetails;
-import com.bayztracker.exceptions.GlobalExceptionHandler;
 import com.bayztracker.model.Alert;
 import com.bayztracker.model.User;
 import com.bayztracker.payload.AlertPayload;
