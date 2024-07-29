@@ -117,23 +117,29 @@
     </changeSet>
     <changeSet id="12-01-2022 20:44" author="bayztracker">
         <createSequence
-      sequenceName="seq_user"
-      startValue="100"
-      incrementBy="50"
-    />
+          sequenceName="seq_user"
+          startValue="100"
+          incrementBy="50"
+        />
         <createSequence
-      sequenceName="seq_role"
-      startValue="100"
-      incrementBy="50"
-    />
+          sequenceName="seq_role"
+          startValue="100"
+          incrementBy="50"
+        />
         <createSequence
-      sequenceName="seq_currency"
-      startValue="100"
-      incrementBy="50"
-    />
+          sequenceName="seq_currency"
+          startValue="100"
+          incrementBy="50"
+        />
     </changeSet>
-
-    <changeSet id="27-07-2024 10:13" author="bayztracker">
+    <changeSet id="27-07-2024 10:13" author="fury-r">
+        <createSequence
+                sequenceName="seq_alert"
+                startValue="1"
+                incrementBy="1"
+        />
+    </changeSet>
+    <changeSet id="27-07-2024 10:14" author="fury-r">
             <createTable tableName="alerts">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" />
@@ -152,21 +158,60 @@
             </column>
                 <column name="created_at" type="datetime" />
             <column name="updated_at" type="datetime" />
-
         </createTable>
-    </changeSet>
-    <changeSet id="12-01-2022 20:44" author="fury-r">
-        <createSequence
-          sequenceName="seq_alert"
-          startValue="1"
-          incrementBy="1"
+        <addForeignKeyConstraint
+                baseTableName="alerts"
+                baseColumnNames="user_id"
+                constraintName="FK_alerts_users"
+                referencedTableName="users"
+                referencedColumnNames="id"
+        />
+        <addForeignKeyConstraint
+                baseTableName="alerts"
+                baseColumnNames="currency_id"
+                constraintName="FK_alerts_currency"
+                referencedTableName="currencies"
+                referencedColumnNames="id"
         />
     </changeSet>
-    <changeSet id="12-01-2022 20:44" author="fury-r">
-        <createSequence
-                sequenceName="seq_alert"
-                startValue="1"
-                incrementBy="1"
-        />
+
+    <changeSet id="27-07-2024 10:15" author="fury-r">
+        <insert tableName="users">
+            <column name="id">3</column>
+            <column name="username">fury</column>
+            <column name="password">test</column>
+        </insert>
+        <insert tableName="user_role">
+            <column name="id">4</column>
+            <column name="user_id">3</column>
+            <column name="role_id">2</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="27-07-2024 10:1'6" author="fury-r">
+        <insert tableName="currencies">
+            <column name="id">2</column>
+            <column name="name">Rupee</column>
+            <column name="symbol">₹</column>
+            <column name="current_price">100</column>
+            <column name="created_at">now()</column>
+            <column name="enabled">true</column>
+        </insert>
+        <insert tableName="currencies">
+            <column name="id">3</column>
+            <column name="name">Pound</column>
+            <column name="symbol">£</column>
+            <column name="current_price">100</column>
+            <column name="created_at">now()</column>
+            <column name="enabled">true</column>
+        </insert>
+        <insert tableName="currencies">
+            <column name="id">4</column>
+            <column name="name">Euro</column>
+            <column name="symbol">€</column>
+            <column name="current_price">60</column>
+            <column name="created_at">now()</column>
+            <column name="enabled">true</column>
+        </insert>
     </changeSet>
 </databaseChangeLog>
