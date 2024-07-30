@@ -86,5 +86,5 @@ You can start using your IDE
 
 ## Run jar file
 ```sh
-    java -jar  bayz-tracker-0.0.1-SNAPSHOT.jar
+    java -jar  .\build\libs\bayz-tracker-0.0.1-SNAPSHOT.jar
 ```
