@@ -2,7 +2,7 @@
 In this assignment, you are expected to an existing project for an imaginary mobile application. Please read the constraints and tasks carefully and follow submission guideline at the bottom of the page.
 
 ## Scenario
-BayzTracker is a cryptocurrency tracker app which allows its users to create alerts to be notified when a price of a coin reaches the price user determines.
+cryptocurrency tracker app which allows its users to create alerts to be notified when a price of a coin reaches the price user determines.
 
 User can create multiple alerts and can track the alert status anytime (triggered or waiting).
 
@@ -18,7 +18,7 @@ There is also currency list page where all coins with their current prices are l
 - GIT for version control
 
 ## General Application Constraints
-- Users are using BayzTracker mobile app, assume that the API is only consumed by mobile
+- Users are using  mobile app, assume that the API is only consumed by mobile
 - Data should only be accepted from the registered users with their ownership rights.
 - You don't have to implement a registration flow, you can add predefined users to database and use them in this project.
 - You don't have to implement currency management flow, you can add predefined currencies to database.
